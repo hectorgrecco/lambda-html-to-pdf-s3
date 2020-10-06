@@ -1,0 +1,36 @@
+service:
+  name: html-to-pdf-s3
+package:
+   individually: true
+
+frameworkVersion: ">=1.0.0 <2.0.0"
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs12.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::AWS-S3-BUCKET/*"
+  stage: ${opt:stage, 'dev'}
+  memorySize: 1536
+  timeout: 30
+  versionFunctions: false
+  deploymentBucket:
+    name: ${self:provider.stage}-AWS-S3-BUCKET
+
+functions:
+  pdfDemo:
+    handler: index.handler
+    name: ${self:provider.stage}-${self:service.name}
+    description: Lambda function that converts HTML pages to PDF document and upload it to S3.
+    environment:
+      FONTCONFIG_PATH: /var/task/fonts
+      S3_BUCKET: AWS-S3-BUCKET
+    events:
+      - http:
+          path: html-to-pdf
+          method: post
+          cors: true

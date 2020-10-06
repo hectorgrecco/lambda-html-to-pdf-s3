@@ -1,0 +1,25 @@
+{
+  "name": "lambda-html-to-pdf-s3",
+  "version": "1.0.0",
+  "description": "AWS Lambda function that converts HTML pages to PDF document and upload it to AWS S3.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeplin/zeplin-html-to-pdf.git"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.63",
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^14.11.4",
+    "@zeplin/eslint-config": "^2.0.0",
+    "eslint": "^4.0.0",
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.2",
+    "serverless-offline": "^6.6.0"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.733.0",
+    "child_process": "^1.0.2",
+    "uuid": "^8.3.0"
+  }
+}
