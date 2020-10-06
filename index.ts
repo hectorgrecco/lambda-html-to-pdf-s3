@@ -1,31 +1,19 @@
-process.env.PATH = `${process.env.PATH}:${process.env.LAMBDA_TASK_ROOT}`;
+import { Handler, APIGatewayProxyResult } from 'aws-lambda';
+import generatePdf from './utils/generate-pdf'
+import uploadToS3 from "./utils/upload-s3";
 
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
+interface Event {
+    html: string
+}
 
-import { generatePdf } from './utils/wkhtmltopdf'
-const s3 = new S3();
-
-export const handler: APIGatewayProxyHandler = async (event, ctx, callback) => {
+export const handler: Handler = async (event: Event): Promise<APIGatewayProxyResult> => {
     try {
         if (!event.html) throw new Error("Missing HTML field.");
         const pdf = await generatePdf(event.html);
-        const key = uuidv4();
-        const params = {
-            Key: `${key}.pdf`,
-            Body: pdf,
-            Bucket: process.env.S3_BUCKET,
-            ContentType: `application/pdf`,
-            ACL: 'public-read'
-        };
-
-        const { Location } = await s3.upload(params).promise();
-        callback(null, {
-            location: Location
-        });
+        const location = await uploadToS3(pdf);
+        return { statusCode: 200, body: JSON.stringify({ location })}
     } catch(error) {
-        callback( {statusCode: 500, error } );
+        return { statusCode: 500, body: JSON.stringify({ error })}
     }
 };
 

@@ -1,6 +1,7 @@
+process.env.PATH = `${process.env.PATH}:${process.env.LAMBDA_TASK_ROOT}`;
 import { spawn } from 'child_process';
 
-export const generatePdf = (html: string, options?: any): Promise<string> => {
+const generatePdf = (html: string, options?: any): Promise<string> => {
     return new Promise(((resolve, reject) => {
         const bufs = [];
         const proc = spawn("/bin/sh", ["-o", "pipefail", "-c", `lib/wkhtmltopdf ${options.join(" ")} - - | cat`]);
@@ -24,3 +25,5 @@ export const generatePdf = (html: string, options?: any): Promise<string> => {
         });
     }));
 };
+
+export default generatePdf;
